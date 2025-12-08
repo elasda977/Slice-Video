@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HLS Video Platform - Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🎬</span>
+                <span class="logo-text">HLS Video Platform</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="convert.html">Convert</a></li>
+                <li><a href="player.html">Player</a></li>
+                <li><a href="manage.html">Manage</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Welcome to HLS Video Platform</h1>
+            <p class="hero-subtitle">Stream videos securely with download protection</p>
+            <div class="hero-buttons">
+                <a href="upload.html" class="btn btn-primary">
+                    <span class="btn-icon">📤</span>
+                    Upload Video
+                </a>
+                <a href="player.html" class="btn btn-secondary">
+                    <span class="btn-icon">▶️</span>
+                    Watch Videos
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <section class="features">
+            <h2 class="section-title">Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Download Protection</h3>
+                    <p>Videos are segmented into small chunks, making it difficult to download the complete file</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Universal Playback</h3>
+                    <p>Works in all modern browsers without plugins or special software</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Fast Streaming</h3>
+                    <p>Adaptive streaming technology ensures smooth playback on any connection</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Responsive design works perfectly on phones, tablets, and desktops</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Beautiful Interface</h3>
+                    <p>Modern, clean design that's easy to use and pleasant to look at</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>SSH Tunnel Ready</h3>
+                    <p>Secure access via SSH tunnel with encrypted connection</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="quick-start">
+            <h2 class="section-title">Quick Start Guide</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Upload Your Video</h3>
+                        <p>Go to the Upload page and select your video file. We'll convert it to HLS format automatically.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Wait for Conversion</h3>
+                        <p>Our system will process your video and create streaming-ready segments.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Watch & Share</h3>
+                        <p>Once converted, you can watch your video in the player or share the playlist link.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="ssh-tunnel">
+            <div class="info-banner">
+                <div class="info-icon">🔐</div>
+                <div class="info-content">
+                    <h3>Accessing via SSH Tunnel</h3>
+                    <p>If you're accessing this platform through an SSH tunnel, make sure to keep your terminal connection open.</p>
+                    <div class="code-block">
+                        <code>ssh -L 8000:localhost:8000 user@10.244.132.148</code>
+                        <button class="copy-btn" onclick="copyToClipboard('ssh -L 8000:localhost:8000 user@10.244.132.148')">Copy</button>
+                    </div>
+                    <p class="info-note">Then access via: <strong>http://localhost:8000</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <h2 class="section-title">How It Works</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">HLS</div>
+                    <div class="stat-label">HTTP Live Streaming</div>
+                    <p>Industry-standard protocol used by YouTube, Netflix, and major platforms</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">6s</div>
+                    <div class="stat-label">Segment Duration</div>
+                    <p>Each video chunk is only 6 seconds, ensuring smooth streaming</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">.m3u8</div>
+                    <div class="stat-label">Playlist Format</div>
+                    <p>Master playlist that tells the browser which segments to load</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 HLS Video Platform. Powered by FFmpeg.</p>
+            <p class="footer-links">
+                <a href="https://ffmpeg.org" target="_blank">FFmpeg</a> •
+                <a href="https://developer.apple.com/streaming/" target="_blank">HLS Spec</a> •
+                <a href="https://github.com/video-dev/hls.js" target="_blank">HLS.js</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#4caf50';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

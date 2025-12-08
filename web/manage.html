@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Videos - HLS Video Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .action-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .action-card:active {
+            transform: translateY(-2px);
+        }
+
+        .action-card.danger:hover {
+            border-color: var(--danger-color);
+        }
+
+        .action-card.success:hover {
+            border-color: var(--success-color);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🎬</span>
+                <span class="logo-text">HLS Video Platform</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="upload.html">Upload</a></li>
+                <li><a href="player.html">Player</a></li>
+                <li><a href="manage.html" class="active">Manage</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Videos List -->
+        <div class="card" style="max-width: 1200px; margin: 40px auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1 style="color: var(--dark); margin: 0;">📹 Video Library</h1>
+                <button onclick="loadVideos()" class="btn btn-primary">
+                    <span class="btn-icon">🔄</span>
+                    Refresh
+                </button>
+            </div>
+
+            <div id="videosContainer">
+                <div style="text-align: center; padding: 40px;">
+                    <div class="spinner"></div>
+                    <p style="color: var(--gray); margin-top: 20px;">Loading videos...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card" style="max-width: 1200px; margin: 40px auto;">
+            <h2 style="color: var(--dark); margin-bottom: 20px;">⚡ Quick Actions</h2>
+            <p style="color: var(--gray); margin-bottom: 30px;">Click any action below to execute</p>
+
+            <div class="feature-grid">
+                <div class="feature-card action-card" onclick="checkDiskUsage()">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Check Disk Usage</h3>
+                    <p>View total space used by all videos</p>
+                </div>
+
+                <div class="feature-card action-card success" onclick="convertBatch()">
+                    <div class="feature-icon">📦</div>
+                    <h3>Convert All Videos</h3>
+                    <p>Batch convert videos in input folder</p>
+                </div>
+
+                <div class="feature-card action-card danger" onclick="confirmCleanAll()">
+                    <div class="feature-icon">🗑️</div>
+                    <h3>Clean All Output</h3>
+                    <p>Delete all converted videos</p>
+                </div>
+
+                <div class="feature-card action-card" onclick="restartServer()">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Restart Server</h3>
+                    <p>Restart web server process</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Command Output Log -->
+        <div class="card" style="max-width: 1200px; margin: 40px auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: var(--dark); margin: 0;">📋 Command Output</h2>
+                <button onclick="clearLog()" class="btn btn-secondary btn-sm">
+                    Clear Log
+                </button>
+            </div>
+
+            <div id="logOutput" style="background: var(--dark); color: #0f0; padding: 20px; border-radius: var(--radius-sm); font-family: 'Courier New', monospace; min-height: 200px; max-height: 400px; overflow-y: auto; white-space: pre-wrap;">
+<span style="color: #0f0;">Ready. Click any action to execute commands.</span>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 HLS Video Platform. Powered by FFmpeg.</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_BASE = 'http://localhost:8001/api';
+
+        // Load videos on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVideos();
+        });
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('logOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            let color = '#0f0'; // green
+
+            if (type === 'error') color = '#f00'; // red
+            else if (type === 'warning') color = '#ff0'; // yellow
+            else if (type === 'success') color = '#0f0'; // green
+
+            const line = `<span style="color: ${color};">[${timestamp}] ${message}</span>\n`;
+            logDiv.innerHTML += line;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('logOutput').innerHTML = '<span style="color: #0f0;">Log cleared.</span>\n';
+        }
+
+        async function loadVideos() {
+            const container = document.getElementById('videosContainer');
+            container.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="spinner"></div><p style="color: var(--gray); margin-top: 20px;">Loading videos...</p></div>';
+
+            try {
+                log('Fetching video list...');
+                const response = await fetch(`${API_BASE}/videos`);
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                if (data.videos.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 40px;">No videos found. Convert some videos to see them here!</p>';
+                    log('No videos found.', 'warning');
+                    return;
+                }
+
+                log(`Found ${data.videos.length} video(s).`, 'success');
+
+                container.innerHTML = '<div class="video-grid">' +
+                    data.videos.map(video => `
+                        <div class="video-card">
+                            <div class="video-thumbnail">🎬</div>
+                            <div class="video-info">
+                                <div class="video-title">${video.name}</div>
+                                <div class="video-meta">
+                                    ${video.segments} segments • ${video.size}
+                                </div>
+                                <div class="video-actions" style="margin-top: 15px;">
+                                    <a href="player.html?playlist=${encodeURIComponent(video.path)}" class="btn btn-primary btn-sm">
+                                        ▶️ Play
+                                    </a>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteVideo('${video.name}')">
+                                        🗑️ Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('') +
+                    '</div>';
+            } catch (error) {
+                container.innerHTML = `<div class="alert alert-danger">Error loading videos: ${error.message}</div>`;
+                log(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function deleteVideo(videoName) {
+            if (!confirm(`Are you sure you want to delete "${videoName}"?\n\nThis will permanently delete all video segments and cannot be undone.`)) {
+                return;
+            }
+
+            log(`Deleting video: ${videoName}...`);
+
+            try {
+                const response = await fetch(`${API_BASE}/videos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'delete_video', video: videoName })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                log(data.output || `Successfully deleted ${videoName}`, 'success');
+                loadVideos(); // Reload the list
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                alert(`Failed to delete video: ${error.message}`);
+            }
+        }
+
+        async function checkDiskUsage() {
+            log('Checking disk usage...');
+
+            try {
+                const response = await fetch(`${API_BASE}/disk-usage`);
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                log(data.output || data.usage, 'success');
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function convertBatch() {
+            if (!confirm('This will convert all videos in the input folder.\n\nThis may take a long time. Continue?')) {
+                return;
+            }
+
+            log('Starting batch conversion...');
+            log('This may take several minutes. Please wait...', 'warning');
+
+            try {
+                const response = await fetch(`${API_BASE}/videos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'convert_batch' })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                log(data.output || data.message, 'success');
+                loadVideos(); // Reload the list
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                alert(`Batch conversion failed: ${error.message}`);
+            }
+        }
+
+        async function confirmCleanAll() {
+            const confirmed = confirm('⚠️ WARNING ⚠️\n\nThis will DELETE ALL converted videos!\n\nThis action CANNOT be undone.\n\nAre you absolutely sure?');
+
+            if (!confirmed) {
+                log('Clean all cancelled by user.');
+                return;
+            }
+
+            const doubleCheck = confirm('FINAL CONFIRMATION\n\nAll your converted videos will be permanently deleted.\n\nClick OK to proceed with deletion.');
+
+            if (!doubleCheck) {
+                log('Clean all cancelled by user.');
+                return;
+            }
+
+            await cleanAll();
+        }
+
+        async function cleanAll() {
+            log('Cleaning all output files...', 'warning');
+
+            try {
+                const response = await fetch(`${API_BASE}/videos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'clean_all' })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                log(data.output || data.message, 'success');
+                loadVideos(); // Reload the list
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+                alert(`Failed to clean output: ${error.message}`);
+            }
+        }
+
+        async function restartServer() {
+            if (!confirm('Restart the web server?\n\nYour current connection may be interrupted briefly.')) {
+                return;
+            }
+
+            log('Restarting web server...');
+
+            try {
+                const response = await fetch(`${API_BASE}/videos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'server_restart' })
+                });
+
+                const data = await response.json();
+                log(data.output || 'Server restarted successfully', 'success');
+
+                setTimeout(() => {
+                    log('Reloading page...', 'info');
+                    window.location.reload();
+                }, 2000);
+            } catch (error) {
+                log(`Server restart initiated. Connection may be interrupted.`, 'warning');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

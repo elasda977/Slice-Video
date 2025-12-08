@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert Video - HLS Video Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .progress-container {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar-wrapper {
+            background: var(--light-gray);
+            border-radius: var(--radius-lg);
+            height: 40px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .progress-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .progress-stat {
+            background: var(--light);
+            padding: 15px;
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .progress-stat-label {
+            color: var(--gray);
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .progress-stat-value {
+            color: var(--dark);
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .video-list {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .video-item {
+            background: var(--light);
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .video-item:hover {
+            border-color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .video-name {
+            font-weight: 500;
+            color: var(--dark);
+            flex: 1;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 0 10px;
+        }
+
+        .status-badge.pending {
+            background: var(--light-gray);
+            color: var(--gray);
+        }
+
+        .status-badge.converting {
+            background: var(--warning-color);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-badge.completed {
+            background: var(--success-color);
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .conversion-log {
+            background: var(--dark);
+            color: #0f0;
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🎬</span>
+                <span class="logo-text">HLS Video Platform</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="upload.html">Upload</a></li>
+                <li><a href="player.html">Player</a></li>
+                <li><a href="manage.html">Manage</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Video Selection -->
+        <div class="card" style="max-width: 1200px; margin: 40px auto;">
+            <h1 style="color: var(--dark); margin-bottom: 10px;">🎞️ Convert Video to HLS</h1>
+            <p style="color: var(--gray); margin-bottom: 30px;">Select a video from the input folder to convert</p>
+
+            <div class="form-group">
+                <label for="videoSelect">Select Video File</label>
+                <select id="videoSelect" class="form-control">
+                    <option value="">Loading videos...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="segmentDuration">Segment Duration (seconds)</label>
+                <input type="number" id="segmentDuration" class="form-control" value="6" min="1" max="30">
+                <small style="color: var(--gray);">Recommended: 6-10 seconds. Smaller = faster start, more files</small>
+            </div>
+
+            <button onclick="startConversion()" class="btn btn-primary btn-lg" id="convertBtn">
+                <span class="btn-icon">▶️</span>
+                Start Conversion
+            </button>
+        </div>
+
+        <!-- Progress Container -->
+        <div class="card progress-container" id="progressContainer" style="max-width: 1200px; margin: 40px auto;">
+            <h2 style="color: var(--dark); margin-bottom: 20px;">📊 Conversion Progress</h2>
+
+            <div class="progress-bar-wrapper">
+                <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+            </div>
+
+            <div class="progress-info" id="progressInfo">
+                <div class="progress-stat">
+                    <div class="progress-stat-label">Status</div>
+                    <div class="progress-stat-value" id="statStatus">Initializing...</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-label">Time Elapsed</div>
+                    <div class="progress-stat-value" id="statTime">00:00:00 / 00:00:00</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-label">Encoding Speed</div>
+                    <div class="progress-stat-value" id="statSpeed">0x</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-label">ETA Remaining</div>
+                    <div class="progress-stat-value" id="statEta">Calculating...</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-label">Current Frame</div>
+                    <div class="progress-stat-value" id="statFrame">0</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-label">Message</div>
+                    <div class="progress-stat-value" id="statMessage" style="font-size: 14px;">Starting...</div>
+                </div>
+            </div>
+
+            <div class="conversion-log" id="conversionLog">
+<span style="color: #0f0;">Conversion will start shortly...</span>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 HLS Video Platform. Powered by FFmpeg.</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_BASE = 'http://localhost:8001/api';
+        let currentConversion = null;
+        let progressInterval = null;
+
+        // Load videos on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInputVideos();
+        });
+
+        function log(message, color = '#0f0') {
+            const logDiv = document.getElementById('conversionLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const line = `<span style="color: ${color};">[${timestamp}] ${message}</span>\n`;
+            logDiv.innerHTML += line;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        async function loadInputVideos() {
+            const select = document.getElementById('videoSelect');
+            select.innerHTML = '<option value="">Loading...</option>';
+
+            try {
+                // In a real implementation, you'd have an API endpoint to list input files
+                // For now, we'll just provide a text input option
+                select.innerHTML = `
+                    <option value="">-- Select a video file --</option>
+                    <option value="custom">Enter filename manually...</option>
+                `;
+
+                // Add event listener for custom input
+                select.addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                        const filename = prompt('Enter the video filename (must be in input/ folder):');
+                        if (filename) {
+                            const option = document.createElement('option');
+                            option.value = filename;
+                            option.textContent = filename;
+                            option.selected = true;
+                            select.insertBefore(option, select.options[1]);
+                        } else {
+                            select.value = '';
+                        }
+                    }
+                });
+
+            } catch (error) {
+                select.innerHTML = '<option value="">Error loading videos</option>';
+                console.error('Error loading videos:', error);
+            }
+        }
+
+        async function startConversion() {
+            const videoSelect = document.getElementById('videoSelect');
+            const videoName = videoSelect.value;
+            const segmentDuration = document.getElementById('segmentDuration').value;
+
+            if (!videoName) {
+                alert('Please select a video file first');
+                return;
+            }
+
+            const convertBtn = document.getElementById('convertBtn');
+            convertBtn.disabled = true;
+            convertBtn.textContent = 'Converting...';
+
+            const progressContainer = document.getElementById('progressContainer');
+            progressContainer.classList.add('active');
+
+            log('Starting conversion...', '#0ff');
+            log(`Video: ${videoName}`, '#fff');
+            log(`Segment Duration: ${segmentDuration}s`, '#fff');
+
+            try {
+                const response = await fetch(`${API_BASE}/videos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        command: 'convert_single',
+                        video: videoName,
+                        segment_duration: parseInt(segmentDuration)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                log('Conversion started successfully', '#0f0');
+                log(`Tracking ID: ${data.video_id}`, '#fff');
+
+                currentConversion = data.video_id;
+
+                // Start polling for progress
+                startProgressTracking(data.video_id);
+
+            } catch (error) {
+                log(`Error: ${error.message}`, '#f00');
+                alert(`Failed to start conversion: ${error.message}`);
+                convertBtn.disabled = false;
+                convertBtn.innerHTML = '<span class="btn-icon">▶️</span> Start Conversion';
+            }
+        }
+
+        function startProgressTracking(videoId) {
+            // Poll every 500ms for progress updates
+            progressInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${API_BASE}/progress/${videoId}`);
+                    const progress = await response.json();
+
+                    updateProgressUI(progress);
+
+                    // Stop polling if conversion is complete or failed
+                    if (progress.status === 'completed' || progress.status === 'error') {
+                        clearInterval(progressInterval);
+                        onConversionComplete(progress);
+                    }
+                } catch (error) {
+                    console.error('Error fetching progress:', error);
+                }
+            }, 500);
+        }
+
+        function updateProgressUI(progress) {
+            const progressBar = document.getElementById('progressBar');
+            const statStatus = document.getElementById('statStatus');
+            const statTime = document.getElementById('statTime');
+            const statSpeed = document.getElementById('statSpeed');
+            const statEta = document.getElementById('statEta');
+            const statFrame = document.getElementById('statFrame');
+            const statMessage = document.getElementById('statMessage');
+
+            // Update progress bar
+            const percentage = progress.progress || 0;
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+
+            // Update stats
+            statStatus.textContent = progress.status || 'Unknown';
+            statTime.textContent = progress.time_string || '00:00:00 / 00:00:00';
+            statSpeed.textContent = progress.speed || '0x';
+            statEta.textContent = progress.eta || 'Calculating...';
+            statFrame.textContent = progress.frame || '0';
+            statMessage.textContent = progress.message || 'Processing...';
+
+            // Color coding based on status
+            if (progress.status === 'converting') {
+                progressBar.style.background = 'linear-gradient(90deg, var(--primary-color), var(--success-color))';
+            } else if (progress.status === 'completed') {
+                progressBar.style.background = 'var(--success-color)';
+            } else if (progress.status === 'error') {
+                progressBar.style.background = 'var(--danger-color)';
+            }
+        }
+
+        function onConversionComplete(progress) {
+            const convertBtn = document.getElementById('convertBtn');
+            convertBtn.disabled = false;
+            convertBtn.innerHTML = '<span class="btn-icon">▶️</span> Start Conversion';
+
+            if (progress.status === 'completed') {
+                log('✓ Conversion completed successfully!', '#0f0');
+                log(`Segments created: ${progress.segments || 'N/A'}`, '#fff');
+                log(`Total size: ${progress.output_size || 'N/A'}`, '#fff');
+
+                setTimeout(() => {
+                    if (confirm('Conversion complete! Would you like to play the video now?')) {
+                        window.location.href = `player.html?playlist=../output/${currentConversion}/playlist.m3u8`;
+                    }
+                }, 1000);
+            } else if (progress.status === 'error') {
+                log('✗ Conversion failed', '#f00');
+                log(`Error: ${progress.error || progress.message}`, '#f00');
+                alert('Conversion failed. Check the log for details.');
+            }
+        }
+
+        // Clean up interval on page unload
+        window.addEventListener('beforeunload', function() {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+            }
+        });
+    </script>
+</body>
+</html>

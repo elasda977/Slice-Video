@@ -1,0 +1,142 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║                                                                      ║
+║              ZEROTIER ACCESS - QUICK TEST GUIDE                      ║
+║                                                                      ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+✅ YES - You CAN use ZeroTier IP: 10.244.132.148
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🌟 ADVANTAGES OF USING ZEROTIER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Works from ANYWHERE (not just same WiFi)
+✓ Encrypted VPN connection
+✓ No need to configure router/firewall
+✓ Persistent IP (doesn't change)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🧪 HOW TO TEST FROM YOUR LAPTOP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Step 1: Check if laptop is on same ZeroTier network
+────────────────────────────────────────────────────────────────────
+
+    On your laptop terminal, run:
+
+        zerotier-cli listnetworks
+
+    OR check your IP:
+
+        ip addr show | grep "10.244"    (Linux/Mac)
+        ipconfig | findstr "10.244"     (Windows)
+
+    ✓ If you see an IP like 10.244.x.x → You're on the network!
+    ✗ If not → You need to join the ZeroTier network first
+
+
+Step 2: Test connectivity from your laptop
+────────────────────────────────────────────────────────────────────
+
+    On your laptop terminal, run:
+
+        ping 10.244.132.148
+
+    ✓ If you get replies → Connection works!
+    ✗ If "Request timeout" → Not on same ZeroTier network
+
+
+Step 3: Start the server
+────────────────────────────────────────────────────────────────────
+
+    On the SERVER (via SSH), run:
+
+        cd /mnt/DATA/Project/video-segment-cutter/scripts
+        ./start-server.sh
+
+    The server will show BOTH access URLs:
+        - Local:     http://192.168.1.26:8000/player.html
+        - ZeroTier:  http://10.244.132.148:8000/player.html
+
+
+Step 4: Access from your laptop browser
+────────────────────────────────────────────────────────────────────
+
+    On your laptop, open browser and visit:
+
+        http://10.244.132.148:8000/player.html
+
+    ✓ You should see the video player interface!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❓ TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Problem: "zerotier-cli: command not found" on laptop
+────────────────────────────────────────────────────────────────────
+Fix: Install ZeroTier on your laptop first
+
+    Linux (Arch):    sudo pacman -S zerotier-one
+    Linux (Ubuntu):  curl -s https://install.zerotier.com | sudo bash
+    macOS:           brew install --cask zerotier-one
+    Windows:         Download from https://www.zerotier.com/download/
+
+
+Problem: Not on same ZeroTier network
+────────────────────────────────────────────────────────────────────
+Fix: Join the same network
+
+    1. Find the network ID on your server:
+       sudo zerotier-cli listnetworks
+
+    2. On your laptop, join that network:
+       sudo zerotier-cli join <network-id>
+
+    3. Authorize your laptop at:
+       https://my.zerotier.com
+
+
+Problem: Can ping but browser won't connect
+────────────────────────────────────────────────────────────────────
+Fix: Make sure server is running on port 8000
+
+    On server, check:
+        ss -tulpn | grep 8000
+
+    Should show: 0.0.0.0:8000
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 COMPARISON: LOCAL vs ZEROTIER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+                      Local Network      ZeroTier VPN
+                      ───────────────    ────────────────
+URL:                  192.168.1.26       10.244.132.148
+Same WiFi required:   YES ✓              NO ✗
+Works remotely:       NO ✗               YES ✓
+Encrypted:            NO ✗               YES ✓
+Setup needed:         Firewall only      Join ZT network
+Speed:                Fast               Fast (direct)
+                                         or Medium (relay)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 QUICK START - ZEROTIER METHOD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+On SERVER:
+    cd /mnt/DATA/Project/video-segment-cutter/scripts
+    ./start-server.sh
+
+On LAPTOP:
+    Browser → http://10.244.132.148:8000/player.html
+
+DONE! 🎉
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 TIP: Bookmark this URL on your laptop for easy access:
+        http://10.244.132.148:8000/player.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For detailed ZeroTier setup, see: ZEROTIER_ACCESS.md

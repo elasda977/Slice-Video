@@ -1,0 +1,137 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║                                                                      ║
+║         HLS VIDEO PLAYER - QUICK START FOR EXTERNAL ACCESS          ║
+║                                                                      ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+🌐 YOUR SERVER IPs:
+   Local Network:  192.168.1.26
+   ZeroTier VPN:   10.244.132.148
+
+📱 ACCESS FROM YOUR LAPTOP:
+   Same WiFi/LAN:  http://192.168.1.26:8000/player.html
+   ZeroTier VPN:   http://10.244.132.148:8000/player.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 OPTION 1: AUTOMATED SETUP (EASIEST)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Run this single command on the server:
+
+    cd /mnt/DATA/Project/video-segment-cutter
+    ./test-setup.sh
+
+This will:
+✓ Open firewall port 8000
+✓ Offer to download a test video
+✓ Convert video to HLS format
+✓ Start the web server
+✓ Show you the URL to access from laptop
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 OPTION 2: MANUAL SETUP (STEP BY STEP)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Step 1: Open firewall port (run once)
+────────────────────────────────────
+    sudo ufw allow 8000/tcp
+    sudo ufw reload
+
+Step 2: Add a video to test
+────────────────────────────────────
+    cp /path/to/your/video.mp4 /mnt/DATA/Project/video-segment-cutter/input/
+
+Step 3: Convert video to HLS
+────────────────────────────────────
+    cd /mnt/DATA/Project/video-segment-cutter/scripts
+    ./convert-to-hls.sh ../input/video.mp4
+
+Step 4: Start the server
+────────────────────────────────────
+    cd /mnt/DATA/Project/video-segment-cutter/scripts
+    ./start-server.sh
+
+Step 5: Access from your laptop
+────────────────────────────────────
+    Option A (Same WiFi):
+        Browser: http://192.168.1.26:8000/player.html
+
+    Option B (ZeroTier VPN - works from anywhere):
+        Browser: http://10.244.132.148:8000/player.html
+
+    Then:
+        Playlist: ../output/video/playlist.m3u8
+        Click: Load Video
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚡ QUICK COMMANDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Navigate to project:
+    cd /mnt/DATA/Project/video-segment-cutter
+
+Start server only:
+    ./scripts/start-server.sh
+
+Stop server:
+    Press Ctrl+C (or pkill -f "python.*8000")
+
+Check if server is running:
+    ss -tulpn | grep 8000
+
+View converted videos:
+    ls -lh output/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔍 TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Can't connect from laptop?
+───────────────────────────────────
+1. Check firewall:
+   sudo ufw status
+   sudo ufw allow 8000/tcp
+
+2. Verify server is running:
+   ss -tulpn | grep 8000
+   (should show: 0.0.0.0:8000)
+
+3. Test from laptop terminal:
+   ping 192.168.1.26
+   telnet 192.168.1.26 8000
+
+4. Make sure laptop is on same WiFi/network
+
+Video won't play?
+───────────────────────────────────
+1. Check playlist path is correct
+2. Verify files exist:
+   ls -lh output/video-name/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 MORE HELP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TESTING_GUIDE.md     - Complete external access guide
+QUICK_REFERENCE.md   - Detailed usage examples
+CHEATSHEET.txt       - Quick command reference
+README.md            - Full documentation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ READY TO START?
+
+Run this now:
+    cd /mnt/DATA/Project/video-segment-cutter
+    ./test-setup.sh
+
+Then open on your laptop:
+    http://192.168.1.26:8000/player.html (same WiFi)
+    http://10.244.132.148:8000/player.html (ZeroTier VPN)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

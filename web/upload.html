@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video - HLS Video Platform</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🎬</span>
+                <span class="logo-text">HLS Video Platform</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="upload.html" class="active">Upload</a></li>
+                <li><a href="player.html">Player</a></li>
+                <li><a href="manage.html">Manage</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card" style="max-width: 800px; margin: 40px auto;">
+            <h1 style="text-align: center; margin-bottom: 30px; color: var(--dark);">📤 Upload Video</h1>
+
+            <div id="uploadForm">
+                <div class="form-group">
+                    <label>Select Video File</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="videoFile" accept="video/*" onchange="handleFileSelect(event)">
+                        <label for="videoFile" class="file-input-label" id="fileLabel">
+                            <span style="font-size: 2em;">📁</span>
+                            <span>Click to select video file or drag and drop here</span>
+                        </label>
+                    </div>
+                    <div id="fileInfo" class="hidden" style="margin-top: 15px; padding: 15px; background: var(--gray-lighter); border-radius: var(--radius-sm);">
+                        <p><strong>File:</strong> <span id="fileName"></span></p>
+                        <p><strong>Size:</strong> <span id="fileSize"></span></p>
+                        <p><strong>Type:</strong> <span id="fileType"></span></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="segmentDuration">Segment Duration (seconds)</label>
+                    <select id="segmentDuration" class="form-control">
+                        <option value="3">3 seconds (fast start)</option>
+                        <option value="6" selected>6 seconds (balanced)</option>
+                        <option value="10">10 seconds (fewer files)</option>
+                        <option value="15">15 seconds (minimal files)</option>
+                    </select>
+                    <p style="color: var(--gray); font-size: 0.9em; margin-top: 8px;">
+                        Smaller segments = faster start time, larger segments = fewer files
+                    </p>
+                </div>
+
+                <div id="uploadInstructions" class="alert alert-warning">
+                    <span style="font-size: 1.5em;">⚠️</span>
+                    <div>
+                        <strong>Manual Upload Required</strong>
+                        <p>Since you're accessing via SSH tunnel, please use the command line to upload and convert videos.</p>
+                    </div>
+                </div>
+
+                <button onclick="showUploadInstructions()" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    <span class="btn-icon">📝</span>
+                    Show Upload Commands
+                </button>
+            </div>
+
+            <div id="instructionsSection" class="hidden" style="margin-top: 30px;">
+                <h2 style="color: var(--dark); margin-bottom: 20px;">📝 Upload Instructions</h2>
+
+                <div class="alert alert-success">
+                    <span style="font-size: 1.5em;">✓</span>
+                    <div>
+                        <strong>Follow these steps to upload and convert your video:</strong>
+                    </div>
+                </div>
+
+                <div class="step" style="margin-top: 20px;">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Upload Video to Server</h3>
+                        <p>Use SCP to upload your video file to the server:</p>
+                        <div class="code-block">
+                            <code id="scpCommand">scp /path/to/your/video.mp4 user@10.244.132.148:/mnt/DATA/Project/video-segment-cutter/input/</code>
+                            <button class="copy-btn" onclick="copyCode('scpCommand')">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>SSH to Server</h3>
+                        <p>Connect to the server via SSH:</p>
+                        <div class="code-block">
+                            <code id="sshCommand">ssh user@10.244.132.148</code>
+                            <button class="copy-btn" onclick="copyCode('sshCommand')">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Convert to HLS Format</h3>
+                        <p>Run the conversion script with your chosen segment duration:</p>
+                        <div class="code-block">
+                            <code id="convertCommand">cd /mnt/DATA/Project/video-segment-cutter/scripts
+./convert-to-hls.sh ../input/video.mp4 6</code>
+                            <button class="copy-btn" onclick="copyCode('convertCommand')">Copy</button>
+                        </div>
+                        <p style="margin-top: 10px; font-size: 0.9em; color: var(--gray);">
+                            Replace <code>video.mp4</code> with your filename and <code>6</code> with your desired segment duration
+                        </p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Watch Your Video</h3>
+                        <p>Once conversion is complete, go to the Player page and enter the playlist path:</p>
+                        <div class="code-block">
+                            <code>../output/video/playlist.m3u8</code>
+                        </div>
+                        <a href="player.html" class="btn btn-success" style="margin-top: 15px;">
+                            <span class="btn-icon">▶️</span>
+                            Go to Player
+                        </a>
+                    </div>
+                </div>
+
+                <div class="info-banner" style="margin-top: 30px;">
+                    <div class="info-icon">💡</div>
+                    <div class="info-content">
+                        <h3>Quick Upload & Convert</h3>
+                        <p>For quick one-liner upload and convert:</p>
+                        <div class="code-block">
+                            <code id="oneLineCommand">scp video.mp4 user@10.244.132.148:/mnt/DATA/Project/video-segment-cutter/input/ && ssh user@10.244.132.148 "cd /mnt/DATA/Project/video-segment-cutter/scripts && ./convert-to-hls.sh ../input/video.mp4"</code>
+                            <button class="copy-btn" onclick="copyCode('oneLineCommand')">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="progressSection" class="hidden" style="margin-top: 30px;">
+                <h3 style="color: var(--dark); margin-bottom: 20px;">⏳ Conversion Progress</h3>
+                <div class="progress">
+                    <div class="progress-bar" id="progressBar" style="width: 0%;">0%</div>
+                </div>
+                <p id="statusMessage" style="text-align: center; color: var(--gray); margin-top: 15px;">
+                    Starting conversion...
+                </p>
+            </div>
+        </div>
+
+        <div class="card" style="max-width: 800px; margin: 40px auto;">
+            <h2 style="color: var(--dark); margin-bottom: 20px;">📋 Supported Formats</h2>
+            <div class="feature-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🎬</div>
+                    <strong>MP4</strong>
+                    <p style="color: var(--gray); font-size: 0.9em;">Most common</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🎥</div>
+                    <strong>AVI</strong>
+                    <p style="color: var(--gray); font-size: 0.9em;">Classic format</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">📹</div>
+                    <strong>MKV</strong>
+                    <p style="color: var(--gray); font-size: 0.9em;">High quality</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">🎞️</div>
+                    <strong>MOV</strong>
+                    <p style="color: var(--gray); font-size: 0.9em;">Apple format</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">📼</div>
+                    <strong>WMV</strong>
+                    <p style="color: var(--gray); font-size: 0.9em;">Windows Media</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">✨</div>
+                    <strong>More</strong>
+                    <p style="color: var(--gray); font-size: 0.9em;">Any FFmpeg format</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 HLS Video Platform. Powered by FFmpeg.</p>
+        </div>
+    </footer>
+
+    <script>
+        let selectedFile = null;
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                const label = document.getElementById('fileLabel');
+                label.classList.add('has-file');
+                label.innerHTML = `
+                    <span style="font-size: 2em;">✅</span>
+                    <span>${file.name} selected</span>
+                `;
+
+                // Show file info
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                document.getElementById('fileType').textContent = file.type || 'Unknown';
+                document.getElementById('fileInfo').classList.remove('hidden');
+
+                // Update commands with actual filename
+                updateCommands(file.name);
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function updateCommands(filename) {
+            const basename = filename.replace(/\.[^/.]+$/, "");
+            const segmentDuration = document.getElementById('segmentDuration').value;
+
+            document.getElementById('scpCommand').textContent =
+                `scp ${filename} user@10.244.132.148:/mnt/DATA/Project/video-segment-cutter/input/`;
+
+            document.getElementById('convertCommand').textContent =
+                `cd /mnt/DATA/Project/video-segment-cutter/scripts\n./convert-to-hls.sh ../input/${filename} ${segmentDuration}`;
+
+            document.getElementById('oneLineCommand').textContent =
+                `scp ${filename} user@10.244.132.148:/mnt/DATA/Project/video-segment-cutter/input/ && ssh user@10.244.132.148 "cd /mnt/DATA/Project/video-segment-cutter/scripts && ./convert-to-hls.sh ../input/${filename} ${segmentDuration}"`;
+        }
+
+        function showUploadInstructions() {
+            document.getElementById('instructionsSection').classList.remove('hidden');
+            document.getElementById('instructionsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyCode(elementId) {
+            const code = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        // Drag and drop functionality
+        const dropZone = document.querySelector('.file-input-label');
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--primary-color)';
+            dropZone.style.background = 'rgba(99, 102, 241, 0.1)';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '';
+            dropZone.style.background = '';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '';
+            dropZone.style.background = '';
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('videoFile').files = files;
+                handleFileSelect({ target: { files: files } });
+            }
+        });
+
+        // Update commands when segment duration changes
+        document.getElementById('segmentDuration').addEventListener('change', () => {
+            if (selectedFile) {
+                updateCommands(selectedFile.name);
+            }
+        });
+    </script>
+</body>
+</html>

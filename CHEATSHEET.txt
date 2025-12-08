@@ -1,0 +1,124 @@
+═══════════════════════════════════════════════════════════════════════════
+  VIDEO SEGMENT CUTTER - CHEAT SHEET
+═══════════════════════════════════════════════════════════════════════════
+
+📍 PROJECT LOCATION:
+   /mnt/DATA/Project/video-segment-cutter/
+
+═══════════════════════════════════════════════════════════════════════════
+⚡ QUICK START (Copy & Paste)
+═══════════════════════════════════════════════════════════════════════════
+
+1️⃣  ADD VIDEO:
+    cp /path/to/video.mp4 /mnt/DATA/Project/video-segment-cutter/input/
+
+2️⃣  CONVERT:
+    cd /mnt/DATA/Project/video-segment-cutter/scripts
+    ./convert-to-hls.sh ../input/video.mp4
+
+3️⃣  VIEW:
+    cd /mnt/DATA/Project/video-segment-cutter/web
+    python -m http.server 8000
+
+    Browser: http://localhost:8000/player.html
+    Path: ../output/video/playlist.m3u8
+
+═══════════════════════════════════════════════════════════════════════════
+🔧 COMMON COMMANDS
+═══════════════════════════════════════════════════════════════════════════
+
+CONVERT WITH CUSTOM SEGMENT SIZE:
+    ./convert-to-hls.sh ../input/video.mp4 10
+    (10 = seconds per segment)
+
+BATCH CONVERT ALL VIDEOS:
+    cd scripts
+    for v in ../input/*.mp4; do ./convert-to-hls.sh "$v"; done
+
+CHECK OUTPUT:
+    ls -lh /mnt/DATA/Project/video-segment-cutter/output/
+
+CLEAN OUTPUT FOLDER:
+    rm -rf /mnt/DATA/Project/video-segment-cutter/output/*
+
+═══════════════════════════════════════════════════════════════════════════
+🌐 SERVER OPTIONS
+═══════════════════════════════════════════════════════════════════════════
+
+Python 3:     python -m http.server 8000
+Python 2:     python -m SimpleHTTPServer 8000
+Node.js:      npx http-server -p 8000
+PHP:          php -S localhost:8000
+
+Then visit:   http://localhost:8000/player.html
+
+═══════════════════════════════════════════════════════════════════════════
+⚙️ SEGMENT DURATION GUIDE
+═══════════════════════════════════════════════════════════════════════════
+
+3-4 sec  →  Fast start, more files
+6 sec    →  DEFAULT (balanced)
+10 sec   →  Fewer files, slower start
+
+═══════════════════════════════════════════════════════════════════════════
+🛠️ TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════
+
+FFmpeg not found:
+    sudo pacman -S ffmpeg          # Arch
+    sudo apt install ffmpeg        # Ubuntu
+
+Permission denied:
+    chmod +x scripts/convert-to-hls.sh
+
+Video won't play:
+    Use HTTP server (not file://)
+    Check browser console (F12)
+
+Port already in use:
+    python -m http.server 8080     # Use different port
+
+═══════════════════════════════════════════════════════════════════════════
+📂 FILE STRUCTURE
+═══════════════════════════════════════════════════════════════════════════
+
+input/              ← Put videos here
+output/             ← HLS output (auto-generated)
+  └─ videoname/
+     ├─ playlist.m3u8    ← Master playlist
+     └─ segment_*.ts     ← Video chunks
+scripts/
+  └─ convert-to-hls.sh  ← Run this
+web/
+  └─ player.html        ← Open in browser
+
+═══════════════════════════════════════════════════════════════════════════
+🚀 ONE-LINER: CONVERT + SERVE
+═══════════════════════════════════════════════════════════════════════════
+
+cd /mnt/DATA/Project/video-segment-cutter/scripts && \
+./convert-to-hls.sh ../input/video.mp4 && \
+cd ../web && \
+python -m http.server 8000
+
+═══════════════════════════════════════════════════════════════════════════
+💡 BASH ALIASES (Add to ~/.bashrc)
+═══════════════════════════════════════════════════════════════════════════
+
+alias hls-convert='cd /mnt/DATA/Project/video-segment-cutter/scripts && ./convert-to-hls.sh'
+alias hls-serve='cd /mnt/DATA/Project/video-segment-cutter/web && python -m http.server 8000'
+
+Usage after adding aliases:
+    hls-convert ../input/video.mp4
+    hls-serve
+
+═══════════════════════════════════════════════════════════════════════════
+📖 MORE INFO
+═══════════════════════════════════════════════════════════════════════════
+
+Quick Guide:  QUICK_REFERENCE.md
+Full Docs:    README.md
+Script:       scripts/convert-to-hls.sh
+Player:       web/player.html
+
+═══════════════════════════════════════════════════════════════════════════

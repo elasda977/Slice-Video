@@ -1,0 +1,21 @@
+# Video files
+input/*
+!input/.gitkeep
+
+# Generated HLS output
+output/*
+!output/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
