@@ -2,8 +2,20 @@
 
 Convert videos to HLS format (.m3u8 + .ts segments) for streaming on websites with download protection, similar to YouTube.
 
+## 🆕 What's New in v2.0 - Real-Time Progress Tracking!
+
+**Just Added:** Live conversion progress with detailed statistics!
+- 📊 Real-time progress bar (0-100%)
+- ⏱️ Live ETA and encoding speed
+- 🎯 Frame-by-frame tracking
+- 🌐 Beautiful web interface
+- 📱 Monitor from any device
+
+👉 **[Quick Start Guide](QUICK_START_PROGRESS.md)** | **[Full Documentation](PROGRESS_TRACKING_GUIDE.md)** | **[Changelog](CHANGELOG.md)**
+
 ## 📋 Features
 
+- **🆕 Real-Time Progress Tracking**: Watch conversions with live stats and ETA
 - **Download Protection**: Videos are split into small segments, making it difficult to download the complete file
 - **Browser-Native Playback**: Works in all modern browsers without plugins
 - **Easy Conversion**: Simple bash script to convert any video to HLS format
