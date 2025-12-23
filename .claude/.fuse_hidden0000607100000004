@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pgrep:*)",
+      "Bash(netstat:*)",
+      "Bash(ss:*)",
+      "Bash(source:*)",
+      "Bash(pip install:*)",
+      "Bash(pkill:*)",
+      "Bash(chmod:*)",
+      "Bash(python3 -m py_compile:*)",
+      "Bash(npm run lint)",
+      "Bash(python -c:*)",
+      "Bash(npm install:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(for i in {1..3})",
+      "Bash(do sleep 5)",
+      "Bash(echo:*)",
+      "Bash(done)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

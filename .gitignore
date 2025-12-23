@@ -19,3 +19,31 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Python Backend
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/.env
+backend/data/*.db
+backend/.pytest_cache/
+backend/data/*.log
+
+# Node.js Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+frontend/.env.local
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Build artifacts
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/

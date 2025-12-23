@@ -1,0 +1,142 @@
+.player-container {
+  padding: 40px 20px;
+  max-width: 1200px;
+}
+
+.player-container h1 {
+  margin-bottom: 8px;
+  color: var(--text-light);
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-gray);
+  font-size: 18px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 40px;
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.empty-state h2 {
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  color: var(--text-gray);
+}
+
+.player-card {
+  margin-bottom: 24px;
+}
+
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  background: #000;
+  border-radius: 8px;
+}
+
+.video-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.video-info {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.video-info h2 {
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+
+.video-meta {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  color: var(--text-gray);
+  font-size: 14px;
+}
+
+.playlist-card {
+  margin-bottom: 24px;
+}
+
+.playlist-card h3 {
+  color: var(--text-light);
+  margin-bottom: 16px;
+}
+
+.playlist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.playlist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-dark);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.playlist-item:hover {
+  background: rgba(102, 126, 234, 0.1);
+  transform: translateX(4px);
+}
+
+.playlist-item.active {
+  border-color: var(--primary-color);
+  background: rgba(102, 126, 234, 0.2);
+}
+
+.playlist-item-icon {
+  font-size: 20px;
+}
+
+.playlist-item-info {
+  flex: 1;
+}
+
+.playlist-item-title {
+  color: var(--text-light);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.playlist-item-meta {
+  color: var(--text-gray);
+  font-size: 13px;
+}
+
+.info-card h3 {
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+
+.info-card p {
+  color: var(--text-gray);
+  line-height: 1.6;
+}

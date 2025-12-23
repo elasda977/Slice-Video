@@ -1,0 +1,87 @@
+.error-boundary {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.error-boundary-content {
+  background: white;
+  border-radius: 12px;
+  padding: 3rem;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.error-boundary-content h1 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.error-message {
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.error-details {
+  text-align: left;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border: 1px solid #ddd;
+}
+
+.error-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #667eea;
+  margin-bottom: 0.5rem;
+  user-select: none;
+}
+
+.error-details summary:hover {
+  color: #764ba2;
+}
+
+.error-stack {
+  margin-top: 1rem;
+}
+
+.error-stack p {
+  margin-bottom: 0.5rem;
+  color: #d32f2f;
+}
+
+.error-stack pre {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.error-actions .btn {
+  flex: 1;
+  max-width: 200px;
+}

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pgrep:*)",
+      "Bash(netstat:*)",
+      "Bash(ss:*)",
+      "Bash(source:*)",
+      "Bash(pip install:*)",
+      "Bash(pkill:*)",
+      "Bash(chmod:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

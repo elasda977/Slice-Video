@@ -1,0 +1,197 @@
+.upload-container {
+  padding: 40px 20px;
+  max-width: 900px;
+}
+
+.upload-container h1 {
+  margin-bottom: 8px;
+  color: var(--text-dark);
+}
+
+.page-subtitle {
+  color: var(--text-gray);
+  margin-bottom: 32px;
+}
+
+.upload-card {
+  max-width: 800px;
+}
+
+/* Steps Indicator */
+.steps-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  padding: 20px 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.step-number {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--bg-hover);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text-gray);
+  transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.step.completed .step-number {
+  background: var(--success-color);
+  border-color: var(--success-color);
+  color: white;
+}
+
+.step.completed .step-number::after {
+  content: '✓';
+  position: absolute;
+}
+
+.step-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-gray);
+}
+
+.step.active .step-label {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.step.completed .step-label {
+  color: var(--success-color);
+}
+
+.step-line {
+  width: 100px;
+  height: 2px;
+  background: var(--border-color);
+  margin: 0 10px;
+}
+
+.upload-area {
+  border: 3px dashed var(--border-color);
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin-bottom: 24px;
+}
+
+.upload-area:hover {
+  border-color: var(--primary-color);
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.file-label {
+  cursor: pointer;
+  display: block;
+}
+
+.upload-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.upload-text {
+  color: var(--text-light);
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.file-info {
+  color: var(--text-gray);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.upload-progress,
+.conversion-progress {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: var(--bg-hover);
+  border-radius: 8px;
+}
+
+.upload-progress h4,
+.conversion-progress h4 {
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.progress-text {
+  text-align: center;
+  color: var(--text-gray);
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.progress-hint {
+  text-align: center;
+  color: var(--text-light);
+  margin-top: 4px;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.upload-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.upload-info {
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+.upload-info h3 {
+  color: var(--text-light);
+  margin-bottom: 12px;
+  margin-top: 20px;
+}
+
+.upload-info h3:first-child {
+  margin-top: 0;
+}
+
+.upload-info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.upload-info ul li {
+  padding: 8px 0;
+  color: var(--text-gray);
+  padding-left: 24px;
+  position: relative;
+}
+
+.upload-info ul li::before {
+  content: '•';
+  position: absolute;
+  left: 8px;
+  color: var(--primary-color);
+}
