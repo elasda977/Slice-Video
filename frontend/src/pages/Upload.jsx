@@ -48,7 +48,7 @@ function Upload() {
     setMessage('Uploading video...')
 
     try {
-      const uploadResponse = await videoApi.uploadVideo(file, (progress) => {
+      await videoApi.uploadVideo(file, (progress) => {
         setUploadProgress(progress)
       })
 
@@ -227,7 +227,7 @@ function Upload() {
           <h3>How It Works</h3>
           <ul>
             <li>✅ Select your video file (MP4, AVI, MKV, MOV)</li>
-            <li>✅ Click "Upload & Process" - video will be uploaded</li>
+            <li>✅ Click &quot;Upload & Process&quot; - video will be uploaded</li>
             <li>✅ Automatic conversion starts immediately</li>
             <li>✅ Video is split into 6-second segments for streaming</li>
             <li>✅ Redirects to dashboard when complete</li>

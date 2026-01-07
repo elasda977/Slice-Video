@@ -1,4 +1,5 @@
 import { Component } from 'react'
+import PropTypes from 'prop-types'
 import './ErrorBoundary.css'
 
 class ErrorBoundary extends Component {
@@ -11,7 +12,7 @@ class ErrorBoundary extends Component {
     }
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true }
   }
 
@@ -40,7 +41,7 @@ class ErrorBoundary extends Component {
             <div className="error-icon">⚠️</div>
             <h1>Oops! Something went wrong</h1>
             <p className="error-message">
-              We're sorry, but something unexpected happened. The error has been logged.
+              We&apos;re sorry, but something unexpected happened. The error has been logged.
             </p>
 
             {this.state.error && (
@@ -70,6 +71,10 @@ class ErrorBoundary extends Component {
 
     return this.props.children
   }
+}
+
+ErrorBoundary.propTypes = {
+  children: PropTypes.node.isRequired
 }
 
 export default ErrorBoundary

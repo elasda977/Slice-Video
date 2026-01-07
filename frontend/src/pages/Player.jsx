@@ -111,7 +111,8 @@ function Player() {
                 className="video-player"
                 controls
                 playsInline
-                onContextMenu={(e) => e.preventDefault()} // Disable right-click (download protection)
+                controlsList="nodownload"
+                onContextMenu={(e) => e.preventDefault()}
               >
                 Your browser does not support the video tag.
               </video>
@@ -157,11 +158,14 @@ function Player() {
           <div className="info-card card">
             <h3>Download Protection</h3>
             <p>
-              This video is segmented into multiple small files (.ts segments) for streaming.
-              Right-click download is disabled to prevent easy downloading of the full video.
-              This provides moderate protection against casual downloading while maintaining
-              compatibility with all browsers through HLS (HTTP Live Streaming) technology.
+              This video is protected through HLS segmentation:
             </p>
+            <ul style={{ marginLeft: '20px', marginTop: '10px' }}>
+              <li>Videos are split into multiple small segment files (.ts format)</li>
+              <li>Right-click and download options are disabled</li>
+              <li>Each segment is only 6 seconds long, making manual download difficult</li>
+              <li>New videos include watermarks with timestamp information</li>
+            </ul>
           </div>
         </>
       )}

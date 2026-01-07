@@ -14,10 +14,11 @@ from datetime import datetime
 class FFmpegConverter:
     """Handle video conversion to HLS format using FFmpeg"""
 
-    def __init__(self, input_file: Path, output_dir: Path, segment_duration: int = 6):
+    def __init__(self, input_file: Path, output_dir: Path, segment_duration: int = 6, watermark_text: Optional[str] = None):
         self.input_file = input_file
         self.output_dir = output_dir
         self.segment_duration = segment_duration
+        self.watermark_text = watermark_text
         self.progress_file = output_dir / ".progress.json"
         self.log_file = output_dir / ".conversion.log"
         self.duration: Optional[float] = None
@@ -139,11 +140,34 @@ class FFmpegConverter:
             # Create output directory
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
-            # FFmpeg command
-            cmd = [
-                "ffmpeg",
-                "-i", str(self.input_file),
-                "-c:v", "libx264",
+            # Build FFmpeg command with optional watermark
+            cmd = ["ffmpeg", "-i", str(self.input_file)]
+
+            # Add watermark filter if watermark text is provided
+            if self.watermark_text:
+                # Escape special characters in watermark text for FFmpeg
+                # Replace colons with \: and escape single quotes
+                escaped_text = self.watermark_text.replace(":", r"\:").replace("'", r"'\\\''")
+
+                # Create watermark with semi-transparent text overlay
+                # Position: bottom-right corner with 10px padding
+                # Font size: 24, color: white with 50% opacity
+                watermark_filter = (
+                    f"drawtext=text='{escaped_text}':"
+                    f"fontsize=24:"
+                    f"fontcolor=white@0.5:"
+                    f"x=w-tw-10:"
+                    f"y=h-th-10:"
+                    f"box=1:"
+                    f"boxcolor=black@0.3:"
+                    f"boxborderw=5"
+                )
+                cmd.extend(["-vf", watermark_filter])
+                cmd.extend(["-c:v", "libx264"])
+            else:
+                cmd.extend(["-c:v", "libx264"])
+
+            cmd.extend([
                 "-c:a", "aac",
                 "-start_number", "0",
                 "-hls_time", str(self.segment_duration),
@@ -152,7 +176,7 @@ class FFmpegConverter:
                 "-f", "hls",
                 "-progress", "pipe:1",
                 str(self.output_dir / "playlist.m3u8")
-            ]
+            ])
 
             await self.update_progress("converting", 1, message="Starting encoding...", duration=int(self.duration))
 

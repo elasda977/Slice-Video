@@ -3,7 +3,6 @@ import { videoApi } from '../api/videoApi'
 import './Convert.css'
 
 function Convert() {
-  const [videos, setVideos] = useState([])
   const [selectedVideo, setSelectedVideo] = useState('')
   const [segmentDuration, setSegmentDuration] = useState(6)
   const [converting, setConverting] = useState(false)
@@ -200,9 +199,9 @@ function Convert() {
         <h3>How it Works</h3>
         <ol className="info-list">
           <li>Upload a video file using the Upload page</li>
-          <li>Enter the filename above (e.g., "myvideo.mp4")</li>
+          <li>Enter the filename above (e.g., &quot;myvideo.mp4&quot;)</li>
           <li>Set the segment duration (6-10 seconds recommended)</li>
-          <li>Click "Start Conversion" to begin</li>
+          <li>Click &quot;Start Conversion&quot; to begin</li>
           <li>Monitor real-time progress as the video is converted</li>
           <li>Once complete, play the video in the Player page</li>
         </ol>

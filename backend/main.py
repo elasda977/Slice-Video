@@ -351,7 +351,19 @@ async def convert_video(
 
     # Start conversion in background
     output_dir = settings.OUTPUT_DIR / video_basename
-    converter = FFmpegConverter(input_file, output_dir, request.segment_duration)
+
+    # Create watermark text (user-specific if authenticated, or IP address if not)
+    watermark_text = None
+    if current_user:
+        # Authenticated user: use username and timestamp
+        from datetime import datetime
+        watermark_text = f"{current_user.username} | {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}"
+    else:
+        # Testing mode: use a generic watermark with timestamp
+        from datetime import datetime
+        watermark_text = f"Video Platform | {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}"
+
+    converter = FFmpegConverter(input_file, output_dir, request.segment_duration, watermark_text)
 
     # Store converter for potential cancellation (thread-safe)
     async with conversions_lock:

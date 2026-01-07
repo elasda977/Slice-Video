@@ -38,6 +38,8 @@ class Settings(BaseSettings):
         "http://localhost:5173",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
+        "http://10.244.132.148:3000",  # ZeroTier server IP
+        "http://10.244.51.225:3000",   # Mac ZeroTier IP
     ]
 
     # File Upload
